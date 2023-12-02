@@ -1,0 +1,77 @@
+# depslib dependency file v1.0
+1701276691 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\aresta.cpp
+	"../includes/Vertice.h"
+
+1701280616 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\vertice.h
+	<iostream>
+	<fstream>
+	<string>
+	"Lista.h"
+	"Aresta.h"
+
+1701264538 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src.\aresta.cpp
+	"../includes/Vertice.h"
+
+1701469054 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\lista.cpp
+	"../includes/Lista.h"
+
+1701469041 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\lista.h
+	<iostream>
+	<limits>
+	"No.h"
+	"Aresta.h"
+	"Vertice.h"
+	"Tupla.h"
+
+1701281232 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\no.h
+
+1701524112 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\main.cpp
+	<iostream>
+	<fstream>
+	<string>
+	<sstream>
+	<math.h>
+	<utility>
+	<tuple>
+	<iomanip>
+	<stdlib.h>
+	<chrono>
+	<limits>
+	"./includes/Grafo.h"
+
+1701469010 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\grafo.h
+	<iostream>
+	<fstream>
+	<string>
+	<sstream>
+	<math.h>
+	<vector>
+	"Tupla.h"
+	"TabelaHash.h"
+
+1701278241 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\tabelahash.h
+	<iostream>
+	<fstream>
+	<string>
+	<sstream>
+	<vector>
+	"Vertice.h"
+
+1701276691 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\aresta.cpp
+	"../includes/Vertice.h"
+
+1701279369 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\vertice.cpp
+	"../includes/Vertice.h"
+
+1701524277 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\grafo.cpp
+	"../includes/Grafo.h"
+
+1701524246 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\tabelahash.cpp
+	"../includes/TabelaHash.h"
+
+1701279311 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\aresta.h
+	"Vertice.h"
+
+1701469228 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\tupla.h
+	"Vertice.h"
+
