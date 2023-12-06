@@ -7,9 +7,15 @@
 #include <sstream>
 #include <math.h>
 #include <vector>
+#include <random>
+#include <iostream>
+#include <ctime>
+#include <cstdlib>
+#include <chrono>
 
 #include "Tupla.h"
 #include "TabelaHash.h"
+#include "Solucao.h"
 
 #pragma once
 
@@ -74,8 +80,8 @@ public:
     Grafo* agmKruskal(ofstream& output);
     */
 
-    Grafo* algoritimoGulosoRoteamento(int numVeiculos , int id_origem);
-
+    Solucao* algoritimoGulosoRoteamento(int numVeiculos , int id_origem , float alpha = 0);
+    void algoritimoReativoRandomizadoGulosoRoteamento(int numVeiculos , int id_origem , int repeticoes);
     void imprimirGraphviz(string nome);
 
 };

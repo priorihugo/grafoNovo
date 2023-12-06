@@ -25,23 +25,28 @@ template <typename T>
 Lista<T> *Lista<T>::insereInicio(T *item, int index)
 {
     if(item == nullptr) return this;
-    No<T>* novoItem = new No<T>(item, index);
+     No<T>* novoItem = new No<T>(item, index);
 
     // se lista vazia
     if (this->inicio == nullptr && this->fim == nullptr)
     {
         inicio = fim = novoItem;
-        novoItem->setProximo( nullptr);
-        novoItem->setAnterior( nullptr);
+        //novoItem->proximo = nullptr;
+        novoItem->setProximo(nullptr);
+        //novoItem->anterior = nullptr;
+        novoItem->setAnterior(nullptr);
     }
     else
     {
+        //novoItem->proximo = inicio;
         novoItem->setProximo(inicio);
+        //novoItem->anterior = nullptr;
         novoItem->setAnterior(nullptr);
+        //inicio->anterior = novoItem;
         inicio->setAnterior(novoItem);
+
         this->inicio = novoItem;
     }
-
     tamanho++;
 }
 
@@ -239,16 +244,9 @@ T* Lista<T>::desempilhaPrimeiro()
     if(this->ehVazia()) return nullptr;
 
     No<T>* retorno = inicio;
-    inicio = inicio->getProximo();
 
-    if (inicio != nullptr)
-    {
-        inicio->setAnterior(nullptr);
-    }
-    else
-    {
-        fim = nullptr;
-    }
+    deleta(inicio->getData()->getId());
+
 
     tamanho--;
     retorno->setProximo(nullptr);
@@ -267,9 +265,11 @@ T* Lista<T>::visitaPrimeiro()
 }
 
 template <typename T>
-T* Lista<T>::encontraMaiorPeso() {
+T* Lista<T>::encontraMaiorPeso()
+{
 
-    if (ehVazia()) {
+    if (ehVazia())
+    {
         return nullptr;
     }
 
@@ -277,10 +277,13 @@ T* Lista<T>::encontraMaiorPeso() {
     T *maiorPeso = nullptr;
     int maxPeso = std::numeric_limits<int>::min(); // Valor mínimo possível para int
 
-    while (temp != nullptr) {
+    while (temp != nullptr)
+    {
         T* data = temp->getData();
-        if (data != nullptr) {
-            if (data->getPeso() > maxPeso) {
+        if (data != nullptr)
+        {
+            if (data->getPeso() > maxPeso)
+            {
                 maxPeso = data->getPeso();
                 maiorPeso = data;
             }
@@ -288,9 +291,12 @@ T* Lista<T>::encontraMaiorPeso() {
         temp = temp->getProximo();
     }
 
-    if (maiorPeso != nullptr) {
+    if (maiorPeso != nullptr)
+    {
         return maiorPeso;
-    } else {
+    }
+    else
+    {
         return nullptr;
     }
 }

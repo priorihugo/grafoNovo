@@ -2,7 +2,7 @@
 1701276691 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\aresta.cpp
 	"../includes/Vertice.h"
 
-1701280616 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\vertice.h
+1701732727 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\vertice.h
 	<iostream>
 	<fstream>
 	<string>
@@ -12,7 +12,7 @@
 1701264538 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src.\aresta.cpp
 	"../includes/Vertice.h"
 
-1701469054 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\lista.cpp
+1701832554 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\lista.cpp
 	"../includes/Lista.h"
 
 1701469041 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\lista.h
@@ -25,7 +25,7 @@
 
 1701281232 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\no.h
 
-1701524112 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\main.cpp
+1701894359 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\main.cpp
 	<iostream>
 	<fstream>
 	<string>
@@ -39,15 +39,21 @@
 	<limits>
 	"./includes/Grafo.h"
 
-1701469010 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\grafo.h
+1701828382 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\grafo.h
 	<iostream>
 	<fstream>
 	<string>
 	<sstream>
 	<math.h>
 	<vector>
+	<random>
+	<iostream>
+	<ctime>
+	<cstdlib>
+	<chrono>
 	"Tupla.h"
 	"TabelaHash.h"
+	"Solucao.h"
 
 1701278241 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\tabelahash.h
 	<iostream>
@@ -60,18 +66,34 @@
 1701276691 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\aresta.cpp
 	"../includes/Vertice.h"
 
-1701279369 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\vertice.cpp
+1701732358 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\vertice.cpp
 	"../includes/Vertice.h"
 
-1701524277 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\grafo.cpp
+1701894288 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\grafo.cpp
 	"../includes/Grafo.h"
 
 1701524246 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\tabelahash.cpp
 	"../includes/TabelaHash.h"
 
-1701279311 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\aresta.h
+1701656852 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\aresta.h
 	"Vertice.h"
 
-1701469228 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\tupla.h
+1701655592 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\tupla.h
 	"Vertice.h"
+	<iostream>
+
+1701830136 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\solucao.h
+	<vector>
+	"Rota.h"
+
+1701828570 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\rota.cpp
+	"../includes/Rota.h"
+
+1701833429 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\rota.h
+	"Tupla.h"
+	"Lista.h"
+	<vector>
+
+1701893317 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\solucao.cpp
+	"../includes/Solucao.h"
 

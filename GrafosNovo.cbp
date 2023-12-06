@@ -13,6 +13,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="include" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -22,6 +23,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -36,12 +38,15 @@
 		<Unit filename="includes/Grafo.h" />
 		<Unit filename="includes/Lista.h" />
 		<Unit filename="includes/No.h" />
+		<Unit filename="includes/Rota.h" />
+		<Unit filename="includes/Solucao.h" />
 		<Unit filename="includes/TabelaHash.h" />
 		<Unit filename="includes/Tupla.h" />
 		<Unit filename="includes/Vertice.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Grafo.cpp" />
 		<Unit filename="src/Lista.cpp" />
+		<Unit filename="src/Solucao.cpp" />
 		<Unit filename="src/TabelaHash.cpp" />
 		<Unit filename="src/Vertice.cpp" />
 		<Extensions>

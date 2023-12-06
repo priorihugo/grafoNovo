@@ -190,7 +190,11 @@ void escolhasAlgoritimos(Grafo *g, ofstream &output)
 
         case 11:
             cout << "[Algoritimo Guloso]" << endl;
-            g->algoritimoGulosoRoteamento(10, 1);
+            g->algoritimoGulosoRoteamento(5, 1, 0.4);
+            break;
+        case 12:
+            cout << "[Algoritimo Guloso]" << endl;
+            g->algoritimoReativoRandomizadoGulosoRoteamento(5, 1, 2500);
             break;
 
 

@@ -8,7 +8,7 @@ Grafo::Grafo(int ehOrdenado, int temDirecao, int temPesoAresta, int temPesoVerti
     tem_peso_aresta = temPesoAresta == 1 ? true : false;
     tem_peso_vertice = temPesoVertice == 1 ? true : false;
 
-    this->vertices = new TabelaHash(2);
+    this->vertices = new TabelaHash(10);
 }
 Grafo::~Grafo()
 {
@@ -143,6 +143,14 @@ void Grafo::imprimirGraphviz(string nome)
     path.append(nome);
     output.open(path + ".dot");
 
+    std::string colors[] =
+    {
+        "red", "green", "blue", "yellow", "purple", "orange",
+        "black", "white", "pink", "cyan", "brown", "gold",
+        "silver", "gray", "lime green","aqua"
+    };
+
+
     cout << "Abrindo o arquivo " << endl;
 
     if (output.is_open())
@@ -181,7 +189,7 @@ void Grafo::imprimirGraphviz(string nome)
                     Aresta *a = lista->iterator->getData();
                     output << vertices->iterator->getData()->getId() << conector << a->getDestino()->getId();
 
-                    if(a->ehArestaRetorno()) output << " [ color=\"red\" ]";
+                    //if(a->ehArestaRetorno()) output << " [ color=\"red\" ]";
 
                     output << endl;
                     lista->proximo();
@@ -452,28 +460,57 @@ float Grafo::dijkstra(int id_origem,int id_destino, ofstream& output )
     }
 }
 
-Aresta* getArestaMenorPeso(Tupla * tupla)
+template<typename T>
+int partition(vector<T>* arr, int low, int high)
 {
+    T pivot = arr->at(high);
+    int i = low - 1;
 
-    Lista<Aresta>* lista = tupla->destino->getArestas();
+    T temp;
 
-    cout << "Arestas canditadas" << endl;
-    lista->imprimeLista();
-    cout << "------------------" << endl;
+    for (int j = low; j < high; j++)
+    {
+        if (arr->at(j)->getPeso() <= pivot->getPeso())
+        {
+            i++;
+            temp = arr->at(i);
+            arr->at(i) = arr->at(j);
+            arr->at(j) = temp;
+        }
+    }
+    temp = arr->at(i + 1);
+    arr->at(i + 1) = arr->at(high);
+    arr->at(high) = temp;
 
+    return i + 1;
+}
 
+template<typename T>
+void quicksort(vector<T>* arr, int low, int high)
+{
+    if (low < high)
+    {
+        int pi = partition<T>(arr, low, high);
+
+        quicksort(arr, low, pi - 1);
+        quicksort(arr, pi + 1, high);
+    }
+}
+
+Aresta* getArestaMenorPeso(Rota * rota)
+{
+    Lista<Aresta>* lista = rota->getPonta()->destino->getArestas();
     Aresta* menor = nullptr;
     float menorPeso = INT_MAX;
 
     lista->iterator = lista->iteratorInicio();
     while(lista->iterator != nullptr)
     {
-
         Aresta* aresta = (Aresta*)lista->iterator->getData();
 
         if(!(aresta->getDestino()->ehVisitado()) &&
-            (aresta->getPeso() <= menorPeso) &&
-            (tupla->capacidade_restante - aresta->getPeso() >= 0 ))
+                (aresta->getPeso() <= menorPeso) &&
+                (rota->getPonta()->capacidade_restante - aresta->getDestino()->getPeso() >= 0 ))
         {
             menor = ((Aresta*)lista->iterator->getData());
             menorPeso = menor->getPeso();
@@ -483,48 +520,165 @@ Aresta* getArestaMenorPeso(Tupla * tupla)
     return menor;
 }
 
-Lista<Tupla>* getCandidatos(vector<Lista<Tupla>*>* rotas)
+template<typename T>
+void printVector(const vector<T>* arr)
 {
-    Lista<Tupla>* canditados = new Lista<Tupla>();
-
-    for (size_t i = 0; i < rotas->size(); ++i)
+    for (size_t j = 0; j < arr->size(); j++)
     {
-        Lista<Tupla>* tuplas = rotas->at(i);
-        Tupla* t = tuplas->visitaPrimeiro();
+        cout << "[" << j << "]" << arr->at(j)->getId()<< " " ;
+    }
+    cout << endl;
+}
 
-        Aresta* menorAresta = getArestaMenorPeso(t);
+
+vector<Tupla*>* getCandidatos(Solucao* rotas, int tamanho)
+{
+//    cout << "todas as rotas " << endl;
+//    rotas->imprime();
+//    cout << "-------------- " << endl;
+
+    vector<Tupla*>* canditados = new vector<Tupla*>();
+    for (size_t i = 0; i < tamanho; ++i)
+    {
+        Tupla* tuplaPonta = rotas->getRota(i)->getPonta();
+        Aresta* menorAresta = getArestaMenorPeso(rotas->getRota(i));
 
         if(menorAresta != nullptr)
         {
             Tupla* t = new Tupla();
-
-            t->capacidade_restante = ((Tupla*)tuplas->visitaPrimeiro())->capacidade_restante - menorAresta->getDestino()->getPeso();
+            t->capacidade_restante = tuplaPonta->capacidade_restante - menorAresta->getDestino()->getPeso();
             t->destino = menorAresta->getDestino();
             t->peso = menorAresta->getPeso();;
             t->index_rota = i;
             t->verticeId = menorAresta->getDestino()->getId();
 
-            canditados->insereInicio(t);
+//            cout <<"menor aresta inserida nos candidatos "<< endl;
+//            t->imprime();
+//            cout<<"--------------------------------------"<< endl;
+            canditados->push_back(t);
         }
     }
+
+    //printVector<Tupla*>(canditados);
+    //quicksort<Tupla*>(canditados, 0, (int)(canditados->size() - 1));
+    //printVector<Tupla*>(canditados);
+
     return canditados;
+}
+
+void atualizaProbabilidades(double probabilidades[], double medias [], double melhor, int tamanho)
+{
+    double qualidadeTotal = 0;
+    double qualidades[6];
+
+    for(size_t i = 0 ; i < tamanho ; i++)
+    {
+        if(medias[i] > 0 )
+        {
+            qualidades[i] = melhor/medias[i];
+            qualidadeTotal+= qualidades[i];
+        }
+    }
+
+    for(size_t i = 0 ; i < tamanho ; i++)
+    {
+        probabilidades[i] = qualidades[i]/qualidadeTotal;
+    }
+
+    cout << "probabilidades" << endl;
+    for(size_t i = 0 ; i < tamanho ; i++)
+    {
+        cout << "[" << i << "] " << probabilidades[i] << endl;;
+    }
+    cout << endl;
 
 }
-Grafo* Grafo::algoritimoGulosoRoteamento(int numVeiculos, int id_origem)
+
+int escolheIndiceAlpha(double probabilidades[], int tamanho)
+{
+    auto seed = chrono::high_resolution_clock::now().time_since_epoch().count();
+    mt19937 gen(seed);
+    uniform_real_distribution<double> dis(0.0, 1.0);
+    double randomNumber = dis(gen);
+    float acumulador = 0;
+    for(size_t i = 0 ; i < tamanho ; i++)
+    {
+        acumulador = acumulador + probabilidades[i];
+        if(acumulador >= randomNumber)
+            return i;
+    }
+
+    return tamanho - 1;
+}
+
+void Grafo::algoritimoReativoRandomizadoGulosoRoteamento(int numVeiculos, int id_origem, int repeticoes)
+{
+
+    double alphas [6] = {0.05, 0.1, 0.15, 0.2, 0.25, 0.3};
+    double probabilidades [6];
+    double utilizados [6];
+
+    for(size_t i = 0 ; i < 6 ; i ++)
+    {
+        utilizados [i] = 0;
+        probabilidades[i] = 1/6;
+    }
+    Solucao* melhor = algoritimoGulosoRoteamento(numVeiculos, id_origem, 0);
+
+    double medias [6];
+    double qualidades [6];
+
+    for(size_t i = 0 ; i < 6 ; i ++)
+    {
+        medias[i] = melhor->getQualidade();
+        qualidades[i] = 0;
+    }
+
+    for(size_t i = 0 ; i < repeticoes ; i++)
+    {
+        int alphaIndex = escolheIndiceAlpha(probabilidades, 6);
+        cout << "alpha escolhido " << alphas[alphaIndex] << endl;
+
+        utilizados[alphaIndex]++;
+
+        Solucao* s = algoritimoGulosoRoteamento(numVeiculos, id_origem, alphas[alphaIndex]);
+
+        if(utilizados[alphaIndex] > 0){
+            qualidades[alphaIndex] += s->getQualidade();
+            medias[alphaIndex] = qualidades[alphaIndex] / utilizados[alphaIndex];
+        }
+
+
+        if(melhor->getQualidade() > s->getQualidade())
+        {
+            melhor = s;
+        }
+
+        atualizaProbabilidades(probabilidades , medias , melhor->getQualidade() , 6);
+
+        cout << "solucao " << i << ":" <<endl;
+
+        //s->imprime();
+    }
+
+    cout << "melhor " <<endl;
+    melhor->imprime();
+    system("pause");
+
+}
+
+Solucao* Grafo::algoritimoGulosoRoteamento(int numVeiculos, int id_origem, float alpha )
 {
     this->limpaMarcacao();
-    Vertice*  origem = vertices->busca(id_origem);
 
+    //this->vertices->imprimeComoTabela();
+    Vertice*  origem = vertices->busca(id_origem);
     origem->setVisitado(true);
 
-    vector<Lista<Tupla>*> rotas;
-    rotas.resize(numVeiculos);
-
+    Solucao* sol = new Solucao(numVeiculos);
     //inicializando rotas
-    for (size_t i = 0; i < rotas.size(); ++i)
+    for (size_t i = 0; i < numVeiculos; ++i)
     {
-        rotas.at(i) = new Lista<Tupla>();
-
         Tupla* t = new Tupla();
         t->capacidade_restante = 100;
         t->destino = origem;
@@ -532,77 +686,45 @@ Grafo* Grafo::algoritimoGulosoRoteamento(int numVeiculos, int id_origem)
         t->index_rota = i;
         t->verticeId = origem->getId();
 
-        ((Lista<Tupla>*)rotas.at(i))->insereInicio(t);
+        sol->getRota(i)->insere(t);
     }
-
     //começando iteração
-
     bool fim = false;
-
     do
     {
-        Lista<Tupla>* canditatos = nullptr;
-        canditatos = getCandidatos(&rotas);
+        vector<Tupla*>* canditatos = nullptr;
+        canditatos = getCandidatos(sol, numVeiculos);
 
-        cout << "Canditatos-------" << endl;
+        auto seed = chrono::high_resolution_clock::now().time_since_epoch().count();
+        mt19937 gen(seed);
+        uniform_real_distribution<double> dis(0.0, 1.0);
+        double randomNumber = dis(gen);
+        int indiceEscolhido =  floor((canditatos->size() - 1) * alpha * randomNumber);
 
-        canditatos->iterator = canditatos->iteratorInicio();
-        while(canditatos->iterator != nullptr)
-        {
-            cout<< " -" << canditatos->iterator->getData()->getId() << "(" << canditatos->iterator->getData()->getPeso() << ")- "<<"(" << canditatos->iterator->getData()->destino->getPeso() << ")";
-            canditatos->proximo();
-        }
-        cout<< endl;
-        cout << "-----------------" << endl;
-        canditatos->iterator = canditatos->iteratorInicio();
+//        cout << "Número aleatório entre 0 e 1: " << randomNumber << endl;
+//        cout << "indice maximo " << ((canditatos->size() - 1) * alpha) << endl;
+//        cout << "indice escolhido " << indiceEscolhido << endl;
 
-        Tupla* melhor = nullptr;
-        float melhorPeso = INT_MAX;
-
-        //o melhor
-        while(canditatos->iterator != nullptr)
-        {
-            if(melhorPeso > ((Tupla*)canditatos->iterator->getData())->peso)
-            {
-                melhor = ((Tupla*)canditatos->iterator->getData());
-                melhorPeso = melhor->peso;
-            }
-            canditatos->proximo();
-        }
-
-        if(canditatos->ehVazia() || melhor == nullptr)
+        if(canditatos->empty())
         {
             fim = true;
         }
         else
         {
+            Tupla* melhor = canditatos->at(indiceEscolhido);
+//            cout <<"melhor tupla do array de candidatos"<< endl;
+//            melhor->imprime();
+//            cout<<"--------------------------------------"<< endl;
+
             int rotaMelhor = melhor->index_rota;
-
             melhor->destino->setVisitado(true);
-            ((Lista<Tupla>*)rotas.at(rotaMelhor))->insereInicio(melhor);
-
-            for (size_t j = 0; j < rotas.size(); ++j)
-            {
-                cout << "[" << j <<"]";
-                Lista<Tupla>* rotaimprime = rotas.at(j);
-                rotaimprime->iterator = rotaimprime->iteratorInicio();
-                while(rotaimprime->iterator != nullptr)
-                {
-                    cout<< " -" << rotaimprime->iterator->getData()->getId() << "(" << rotaimprime->iterator->getData()->getPeso() << ")" << "(" << rotaimprime->iterator->getData()->capacidade_restante << ")- ";
-                    rotaimprime->proximo();
-                }
-                cout<< endl;
-                rotaimprime->iterator = rotaimprime->iteratorInicio();
-
-            }
-            system("pause");
+            sol->getRota(rotaMelhor)->insere(melhor);
+//            sol->imprime();
+//            system("pause");
         }
-
         delete canditatos;
-
     }
     while(!fim);
 
-
-
+    return sol;
 }

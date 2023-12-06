@@ -92,6 +92,8 @@ public:
     {
         this->ehRetorno = retorno;
     };
+
+    void imprime(){};
 };
 
 #endif

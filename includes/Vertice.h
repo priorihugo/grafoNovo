@@ -25,54 +25,105 @@ class Vertice
 {
 private:
 
-	int id;
-	int coordX = 0 , coordY = 0;
-	int grauEntrada;
-	int grauSaida;
-	float peso;
-	bool visitado;
+    int id;
+    int coordX = 0, coordY = 0;
+    int grauEntrada;
+    int grauSaida;
+    int cor;
+    float peso;
+    bool visitado;
 
-	Lista<Aresta> *arestas;
+    Lista<Aresta> *arestas;
 
 public:
-	Vertice(int novoId, float novoPeso , int coordX = 0 , int coordY = 0);
-	Vertice(Vertice* copia);
-	~Vertice();
+    Vertice(int novoId, float novoPeso, int coordX = 0, int coordY = 0);
+    Vertice(Vertice* copia);
+    ~Vertice();
 
-	int getId() { return this->id; };
-	int getGrauSaida() { return this->grauSaida; };
-	int getGrauEntrada() { return this->grauEntrada; };
-	float getPeso() { return this->peso; };
-	bool ehVisitado() { return visitado; };
-	int getX(){ return this->coordX; };
-	int getY(){	return this->coordY; };
+    int getId()
+    {
+        return this->id;
+    };
+    int getGrauSaida()
+    {
+        return this->grauSaida;
+    };
+    int getGrauEntrada()
+    {
+        return this->grauEntrada;
+    };
+    float getPeso()
+    {
+        return this->peso;
+    };
+    bool ehVisitado()
+    {
+        return visitado;
+    };
+    int getX()
+    {
+        return this->coordX;
+    };
+    int getY()
+    {
+        return this->coordY;
+    };
 
-	void setVisitado(bool valor) { this->visitado = valor; };
-	void incSaida() { grauSaida++; };
-	void incEntrada() { grauEntrada++; };
-	void decSaida() { grauSaida--; };
-	void decEntrada() { grauEntrada--; };
-	void setPeso(float p) { this->peso = p; };
+    int getCor()
+    {
+        return cor;
+    };
 
-	Vertice *insereAresta(Vertice *destino, float peso , bool ehRetorno = false);
-	Vertice *removeAresta(int destino_id);
-	//Vertice *removeAresta(Vertice *destino);
-	Vertice *removeTodasArestas(bool ehOrdenado);
-	Aresta *buscaAresta(int destino_id);
-	//Aresta *buscaAresta(Vertice *destino);
+    void setCor(int cor)
+    {
+        this->cor = cor;
+    }
 
-	Lista<Aresta>* getArestas(){ return this->arestas;};
+    void setVisitado(bool valor)
+    {
+        this->visitado = valor;
+    };
+    void incSaida()
+    {
+        grauSaida++;
+    };
+    void incEntrada()
+    {
+        grauEntrada++;
+    };
+    void decSaida()
+    {
+        grauSaida--;
+    };
+    void decEntrada()
+    {
+        grauEntrada--;
+    };
+    void setPeso(float p)
+    {
+        this->peso = p;
+    };
 
-	void imprime();
+    Vertice *insereAresta(Vertice *destino, float peso, bool ehRetorno = false);
+    Vertice *removeAresta(int destino_id);
+    Vertice *removeTodasArestas(bool ehOrdenado);
+    Aresta *buscaAresta(int destino_id);
 
-	bool compara(Vertice *item)
-	{
-		return this == item;
-	};
-	bool comparaId(int id)
-	{
-		return this->getId() == id;
-	};
+    Lista<Aresta>* getArestas()
+    {
+        return this->arestas;
+    };
+
+    void imprime();
+
+    bool compara(Vertice *item)
+    {
+        return this == item;
+    };
+    bool comparaId(int id)
+    {
+        return this->getId() == id;
+    };
 };
 
 #endif

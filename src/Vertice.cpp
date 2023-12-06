@@ -10,6 +10,8 @@ Vertice::Vertice(int novoId, float novoPeso , int coordX , int coordY)
     this->coordX = coordX;
     this->coordY = coordY;
 
+    this->cor = -1;
+
     this->arestas = new Lista<Aresta>();
 }
 
