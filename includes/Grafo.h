@@ -28,12 +28,16 @@ class Grafo
 		bool eh_direcionado;
 		bool tem_peso_aresta;
 		bool tem_peso_vertice;
+
+         string nome;
 		///lista de vertices
+
+       
         TabelaHash *vertices;
 
 public:
 
-    Grafo(int ehOrdenado, int temDirecao, int temPesoAresta, int temPesoVertice);
+    Grafo(int temDirecao, int temPesoAresta, int temPesoVertice , string nome = "Grafo");
     ~Grafo();
 
     ///getters imediatos
