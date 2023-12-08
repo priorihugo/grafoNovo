@@ -105,7 +105,7 @@ void escolhasManuais(Grafo *g)
         }
     } while (!exit);
 }
-void escolhasAlgoritimos(Grafo *g, ofstream &output , int repeticoes = 2500 , int rotas = 5)
+void escolhasAlgoritimos(Grafo *g, ofstream &output, int repeticoes = 2500, int rotas = 5)
 {
     bool exit = false;
     int escolha;
@@ -191,7 +191,7 @@ void escolhasAlgoritimos(Grafo *g, ofstream &output , int repeticoes = 2500 , in
         // so pra n�o deixar os grafos criados perdidos em memoria
     } while (!exit);
 }
-Grafo *leituraPorAraquivo(ifstream &input_file, int directed, int weightedEdge, int weightedNode , string nome)
+Grafo *leituraPorAraquivo(ifstream &input_file, int directed, int weightedEdge, int weightedNode, string nome)
 {
     float peso_vertice_o = 1;
     float peso_vertice_d = 1;
@@ -201,7 +201,7 @@ Grafo *leituraPorAraquivo(ifstream &input_file, int directed, int weightedEdge, 
     int id_d;
 
     input_file >> ordem;
-    Grafo *g = new Grafo(directed, weightedEdge, weightedNode , nome);
+    Grafo *g = new Grafo(directed, weightedEdge, weightedNode, nome);
 
     if (g->temPesoAresta() && g->temPesoVertice())
     {
@@ -255,13 +255,13 @@ Grafo *leituraPorAraquivo(ifstream &input_file, int directed, int weightedEdge, 
     return g;
 }
 
-Grafo *leituraPorAraquivoTipo2(ifstream &input_file , string nome)
+Grafo *leituraPorAraquivoTipo2(ifstream &input_file, string nome)
 {
     bool leitura_coords = false, leitura_demanda = false;
     std::string linha;
     int capacidade = 0, coordId = 0, coordX = 0, coordY = 0, coordDemanda = 0;
 
-    Grafo *g = new Grafo(0, 1, 1 , nome);
+    Grafo *g = new Grafo(0, 1, 1, nome);
 
     if (input_file.is_open())
     {
@@ -328,18 +328,22 @@ Grafo *leituraPorAraquivoTipo2(ifstream &input_file , string nome)
     return g;
 }
 // Função para validar se todos os argumentos esperados foram fornecidos
-bool validarArgumentos(int argc) {
+bool validarArgumentos(int argc)
+{
     // Verifica se a quantidade mínima de argumentos foi passada
-    if (argc < 4 || argc > 7) {
+    if (argc < 4 || argc > 7)
+    {
         std::cout << "Uso: ./<program_name> <type> <input_file> <output_file> [<directed> <weighted_edge> <weighted_node>]" << std::endl;
         return false;
     }
     return true;
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[])
+{
     // Verifica se a quantidade de argumentos é válida
-    if (!validarArgumentos(argc)) {
+    if (!validarArgumentos(argc))
+    {
         return 1;
     }
 
@@ -368,12 +372,22 @@ int main(int argc, char* argv[]) {
     {
         if (argc == 7 && type == "1")
         {
-            graph = leituraPorAraquivo(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]) , input_file_name);
+            size_t pos = input_file_name.find('/');
+            string nomeSemPath = input_file_name.substr(pos+1);
+            pos = input_file_name.find('.');
+            string nome = nomeSemPath.substr(0 , pos);
+
+            graph = leituraPorAraquivo(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), nome);
             escolhasAlgoritimos(graph, output_file);
         }
         else if (argc == 5 && type == "2")
         {
-            graph = leituraPorAraquivoTipo2(input_file , input_file_name);
+             size_t pos = input_file_name.find('/');
+            string nomeSemPath = input_file_name.substr(pos+1);
+            pos = input_file_name.find('.');
+            string nome = nomeSemPath.substr(0 , pos);
+
+            graph = leituraPorAraquivoTipo2(input_file, nome);
             escolhasAlgoritimos(graph, output_file, atoi(argv[4]));
         }
     }

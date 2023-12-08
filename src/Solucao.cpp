@@ -45,3 +45,18 @@ void Solucao::imprime(){
     }
     cout <<"Qualidade: " << this->getQualidade() << endl;
 }
+
+string Solucao::getParaTXT(){
+
+    stringstream ss;
+    
+    for (size_t j = 0; j < this->rotas->size(); j++)
+    {
+        Rota* rotaimprime = this->getRota(j);
+        ss << "[" << j <<"]";
+        ss << rotaimprime->getParaTXT();
+    }
+    ss << "Qualidade: " << this->getQualidade() << endl;
+
+    return ss.str();
+}

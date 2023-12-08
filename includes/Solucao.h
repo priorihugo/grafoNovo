@@ -2,6 +2,8 @@
 #define SOLUCAO_H
 
 #include <vector>
+#include <string>
+#include <sstream>
 #include "Rota.h"
 
 using namespace std;
@@ -20,6 +22,7 @@ class Solucao
         float getQualidade();
 
         Rota* getRota(int index);
+        string getParaTXT();
 
     private:
         vector<Rota*>* rotas;

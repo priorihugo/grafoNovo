@@ -2,13 +2,13 @@
 #define FLT_MAX 2147483640 / 2
 #include "../includes/Grafo.h"
 
-Grafo::Grafo(int temDirecao, int temPesoAresta, int temPesoVertice , string nome)
+Grafo::Grafo(int temDirecao, int temPesoAresta, int temPesoVertice, string nome)
 {
     eh_direcionado = temDirecao == 1 ? true : false;
     tem_peso_aresta = temPesoAresta == 1 ? true : false;
     tem_peso_vertice = temPesoVertice == 1 ? true : false;
 
-    this-> nome = nome;
+    this->nome = nome;
 
     this->vertices = new TabelaHash(10);
 }
@@ -472,14 +472,16 @@ Aresta *getArestaMenorPeso(Rota *rota)
     return menor;
 }
 
-
 // Função de particionamento para o Quicksort
-int particionar(std::vector<Tupla*>& vetor, int baixo, int alto) {
+int particionar(std::vector<Tupla *> &vetor, int baixo, int alto)
+{
     int pivo = vetor[alto]->getPeso();
     int i = (baixo - 1);
 
-    for (int j = baixo; j <= alto - 1; j++) {
-        if (vetor[j]->getPeso() < pivo) {
+    for (int j = baixo; j <= alto - 1; j++)
+    {
+        if (vetor[j]->getPeso() < pivo)
+        {
             i++;
             std::swap(vetor[i], vetor[j]);
         }
@@ -489,8 +491,10 @@ int particionar(std::vector<Tupla*>& vetor, int baixo, int alto) {
 }
 
 // Função Quicksort
-void quicksort(std::vector<Tupla*>& vetor, int baixo, int alto) {
-    if (baixo < alto) {
+void quicksort(std::vector<Tupla *> &vetor, int baixo, int alto)
+{
+    if (baixo < alto)
+    {
         int pi = particionar(vetor, baixo, alto);
 
         quicksort(vetor, baixo, pi - 1);
@@ -581,8 +585,8 @@ int escolheIndiceAlpha(double probabilidades[], int tamanho)
 
 void Grafo::algoritimoReativoRandomizadoGulosoRoteamento(int numVeiculos, int id_origem, int repeticoes)
 {
-
-    //double alphas[6] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6};
+    auto start = std::chrono::high_resolution_clock::now();
+    // double alphas[6] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6};
     double alphas[6] = {0.05, 0.1, 0.15, 0.2, 0.25, 0.3};
 
     double probabilidades[6];
@@ -594,6 +598,7 @@ void Grafo::algoritimoReativoRandomizadoGulosoRoteamento(int numVeiculos, int id
         probabilidades[i] = 1 / 6;
     }
     Solucao *melhor = algoritimoGulosoRoteamento(numVeiculos, id_origem, 0);
+    float melhorAlpha = 0;
 
     double medias[6];
     double qualidades[6];
@@ -607,8 +612,6 @@ void Grafo::algoritimoReativoRandomizadoGulosoRoteamento(int numVeiculos, int id
     for (size_t i = 0; i < repeticoes; i++)
     {
         int alphaIndex = escolheIndiceAlpha(probabilidades, 6);
-        cout << "alpha escolhido " << alphas[alphaIndex] << endl;
-
         utilizados[alphaIndex]++;
 
         Solucao *s = algoritimoGulosoRoteamento(numVeiculos, id_origem, alphas[alphaIndex]);
@@ -622,16 +625,48 @@ void Grafo::algoritimoReativoRandomizadoGulosoRoteamento(int numVeiculos, int id
         if (melhor->getQualidade() > s->getQualidade())
         {
             melhor = s;
+            melhorAlpha = alphas[alphaIndex];
         }
 
         atualizaProbabilidades(probabilidades, medias, melhor->getQualidade(), 6);
 
-        //cout << "solucao " << i << ":" << endl;
+        // cout << "solucao " << i << ":" << endl;
     }
+
+    auto end = std::chrono::high_resolution_clock::now();
 
     cout << "melhor " << endl;
     melhor->imprime();
-    system("pause");
+    // system("pause");
+
+    std::chrono::duration<double> elapsed_seconds = end - start;
+
+    // Imprimir a diferença de tempo
+
+    ofstream output;
+    string path = "output/";
+    path = path.append(this->nome);
+    path = path.append("_relatorio.txt");
+    output.open(path, ios::app);
+
+    cout << "path: " << path << endl;
+
+    if (output.is_open())
+    {
+        output << "----------------------------------------" << endl;
+        output << endl;
+        output << "Nome: " << this->nome << endl;
+        output << "repetições: " << repeticoes << endl;
+        output << "Alpha: " << melhorAlpha << endl;
+        output << "Tempo decorrido: " << elapsed_seconds.count() << " segundos" << std::endl
+               << endl;
+        output << "Rota: " << endl;
+        output << melhor->getParaTXT() << endl;
+        output << "----------------------------------------" << endl
+               << endl;
+
+    }
+    output.close();
 }
 
 Solucao *Grafo::algoritimoGulosoRoteamento(int numVeiculos, int id_origem, float alpha)
