@@ -13,7 +13,7 @@ class Solucao
 {
     public:
         Solucao();
-        Solucao(int tamanho);
+        Solucao(int tamanho , int capacidade);
 
         virtual ~Solucao();
 

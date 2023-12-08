@@ -105,7 +105,9 @@ void Grafo::geraDistanciasDeVertices()
 
     while (vertices->iterator != nullptr)
     {
+        atual = vertices->iterator;
         No<Vertice> *iteracao = vertices->iterator = vertices->iteratorInicio();
+
         while (iteracao != nullptr)
         {
             if (atual->getData()->getId() != iteracao->getData()->getId())
@@ -113,13 +115,17 @@ void Grafo::geraDistanciasDeVertices()
                 Vertice *dataI = iteracao->getData();
                 Vertice *dataA = atual->getData();
 
-                distancia = sqrt(pow(dataI->getX() - dataA->getX(), 2) + pow(dataI->getY() - dataA->getY(), 2));
+                float quadradoX = pow(abs(dataI->getX() - dataA->getX()), 2);
+                float quadradoY = pow(abs(dataI->getY() - dataA->getY()), 2);
+
+                distancia = sqrt(quadradoX + quadradoY);
                 this->insereAresta(dataA->getId(), dataI->getId(), distancia, false);
             }
             iteracao = vertices->proximo();
         }
+
         vertices->setIterator(atual);
-        atual = vertices->proximo();
+        vertices->proximo();
     }
 }
 
@@ -206,7 +212,6 @@ void Grafo::imprimirGraphviz(string nome)
 
     cout << command << endl;
     system(command.data());
-    system("pause");
 }
 
 Grafo *Grafo::SGVI_fechoTransitivoIndireto(int id_origem, ofstream &output)
@@ -254,7 +259,7 @@ Grafo *Grafo::buscaEmLargura(int id)
     {
         Vertice *atual = pilhaVertices->desempilhaPrimeiro();
         Lista<Aresta> *arestas = atual->getArestas();
-        arestas->imprimeLista();
+        //arestas->imprimeLista();
         arestas->iterator = arestas->iteratorInicio();
 
         resultado->insereVertice(atual->getId());
@@ -292,7 +297,7 @@ bool Grafo::aux(Grafo *resultado, TabelaHash *visitados, Vertice *inicio)
             cout << "adicione todo o caminho ah solução e retorna" << endl;
             /// adicione todo o caminho ah solução e retorna
             Vertice *destino = caminho->desempilhaPrimeiro();
-            caminho->imprimeLista();
+            //caminho->imprimeLista();
             while (!caminho->ehVazia())
             {
                 Vertice *origem = caminho->desempilhaPrimeiro();
@@ -327,7 +332,7 @@ bool Grafo::aux(Grafo *resultado, TabelaHash *visitados, Vertice *inicio)
                 if (naoVisitadoOuSolucao && pilhaDeVertices->busca(atual->getArestas()->iterator->getData()->getDestino()->getId()) == nullptr)
                 {
                     cout << "inserindo" << endl;
-                    atual->getArestas()->iterator->getData()->getDestino()->imprime();
+                    //atual->getArestas()->iterator->getData()->getDestino()->imprime();
                     pilhaDeVertices->insereInicio(atual->getArestas()->iterator->getData()->getDestino());
                 }
                 atual->getArestas()->proximo();
@@ -335,7 +340,7 @@ bool Grafo::aux(Grafo *resultado, TabelaHash *visitados, Vertice *inicio)
         }
 
         visitados->insere(atual->getId(), atual);
-        pilhaDeVertices->imprimeLista();
+        //pilhaDeVertices->imprimeLista();
     }
 
     delete caminho;
@@ -520,7 +525,6 @@ vector<Tupla *> *getCandidatos(Solucao *rotas, int tamanho)
             t->capacidade_restante = tuplaPonta->capacidade_restante - menorAresta->getDestino()->getPeso();
             t->destino = menorAresta->getDestino();
             t->peso = menorAresta->getPeso();
-            ;
             t->index_rota = i;
             t->verticeId = menorAresta->getDestino()->getId();
 
@@ -573,9 +577,11 @@ int escolheIndiceAlpha(double probabilidades[], int tamanho)
     uniform_real_distribution<double> dis(0.0, 1.0);
     double randomNumber = dis(gen);
     float acumulador = 0;
+
     for (size_t i = 0; i < tamanho; i++)
     {
         acumulador = acumulador + probabilidades[i];
+
         if (acumulador >= randomNumber)
             return i;
     }
@@ -583,10 +589,10 @@ int escolheIndiceAlpha(double probabilidades[], int tamanho)
     return tamanho - 1;
 }
 
-void Grafo::algoritimoReativoRandomizadoGulosoRoteamento(int numVeiculos, int id_origem, int repeticoes)
+void Grafo::algoritimoReativoRandomizadoGulosoRoteamento(int numVeiculos, int capacidade, int id_origem, int repeticoes)
 {
     auto start = std::chrono::high_resolution_clock::now();
-    // double alphas[6] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6};
+    //double alphas[6] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6};
     double alphas[6] = {0.05, 0.1, 0.15, 0.2, 0.25, 0.3};
 
     double probabilidades[6];
@@ -597,8 +603,25 @@ void Grafo::algoritimoReativoRandomizadoGulosoRoteamento(int numVeiculos, int id
         utilizados[i] = 0;
         probabilidades[i] = 1 / 6;
     }
-    Solucao *melhor = algoritimoGulosoRoteamento(numVeiculos, id_origem, 0);
+
+    size_t limite = 100;
+    size_t count = 0;
+
+    Solucao *melhor = algoritimoGulosoRoteamento(numVeiculos, capacidade, id_origem, 0);
+    // caso não encontre uma solução base, tente 100 vezes com radomizado
+    while (melhor == nullptr && count == limite)
+    {
+        melhor = algoritimoGulosoRoteamento(numVeiculos, capacidade, id_origem, 0.5);
+    };
+
+    if (melhor == nullptr)
+    {
+        cout << "Não foi possivel encontrar uma solução base para o problema" << endl;
+        return;
+    }
+
     float melhorAlpha = 0;
+    int num_erros = 0;
 
     double medias[6];
     double qualidades[6];
@@ -614,30 +637,33 @@ void Grafo::algoritimoReativoRandomizadoGulosoRoteamento(int numVeiculos, int id
         int alphaIndex = escolheIndiceAlpha(probabilidades, 6);
         utilizados[alphaIndex]++;
 
-        Solucao *s = algoritimoGulosoRoteamento(numVeiculos, id_origem, alphas[alphaIndex]);
+        Solucao *s = algoritimoGulosoRoteamento(numVeiculos, capacidade, id_origem, alphas[alphaIndex]);
 
-        if (utilizados[alphaIndex] > 0)
+        if (s != nullptr)
         {
-            qualidades[alphaIndex] += s->getQualidade();
-            medias[alphaIndex] = qualidades[alphaIndex] / utilizados[alphaIndex];
-        }
+            if (utilizados[alphaIndex] > 0)
+            {
+                qualidades[alphaIndex] += s->getQualidade();
+                medias[alphaIndex] = qualidades[alphaIndex] / utilizados[alphaIndex];
+            }
 
-        if (melhor->getQualidade() > s->getQualidade())
+            if (melhor->getQualidade() > s->getQualidade())
+            {
+                melhor = s;
+                melhorAlpha = alphas[alphaIndex];
+            }
+
+            atualizaProbabilidades(probabilidades, medias, melhor->getQualidade(), 6);
+        }
+        else
         {
-            melhor = s;
-            melhorAlpha = alphas[alphaIndex];
+            num_erros++;
         }
-
-        atualizaProbabilidades(probabilidades, medias, melhor->getQualidade(), 6);
-
-        // cout << "solucao " << i << ":" << endl;
     }
 
     auto end = std::chrono::high_resolution_clock::now();
-
     cout << "melhor " << endl;
     melhor->imprime();
-    // system("pause");
 
     std::chrono::duration<double> elapsed_seconds = end - start;
 
@@ -657,19 +683,19 @@ void Grafo::algoritimoReativoRandomizadoGulosoRoteamento(int numVeiculos, int id
         output << endl;
         output << "Nome: " << this->nome << endl;
         output << "repetições: " << repeticoes << endl;
-        output << "Alpha: " << melhorAlpha << endl;
+        output << "Melhor Alpha: " << melhorAlpha << endl;
+        output << "Tentativas sem solução viavel " << num_erros << endl;
         output << "Tempo decorrido: " << elapsed_seconds.count() << " segundos" << std::endl
                << endl;
         output << "Rota: " << endl;
         output << melhor->getParaTXT() << endl;
         output << "----------------------------------------" << endl
                << endl;
-
     }
     output.close();
 }
 
-Solucao *Grafo::algoritimoGulosoRoteamento(int numVeiculos, int id_origem, float alpha)
+Solucao *Grafo::algoritimoGulosoRoteamento(int numVeiculos, int capacidade, int id_origem, float alpha)
 {
     this->limpaMarcacao();
 
@@ -677,12 +703,12 @@ Solucao *Grafo::algoritimoGulosoRoteamento(int numVeiculos, int id_origem, float
     Vertice *origem = vertices->busca(id_origem);
     origem->setVisitado(true);
 
-    Solucao *sol = new Solucao(numVeiculos);
+    Solucao *sol = new Solucao(numVeiculos, capacidade);
     // inicializando rotas
     for (size_t i = 0; i < numVeiculos; ++i)
     {
         Tupla *t = new Tupla();
-        t->capacidade_restante = 100;
+        t->capacidade_restante = capacidade;
         t->destino = origem;
         t->peso = 0;
         t->index_rota = i;
@@ -713,9 +739,38 @@ Solucao *Grafo::algoritimoGulosoRoteamento(int numVeiculos, int id_origem, float
             int rotaMelhor = melhor->index_rota;
             melhor->destino->setVisitado(true);
             sol->getRota(rotaMelhor)->insere(melhor);
+
+            //sol->imprime();
         }
+
         delete canditatos;
     } while (!fim);
+
+    vertices->iterator = vertices->iteratorInicio();
+    while (vertices->iterator != nullptr)
+    {
+        if (!vertices->iterator->getData()->ehVisitado())
+            return nullptr;
+
+        vertices->proximo();      
+    }
+
+    for (size_t i = 0; i < numVeiculos; i++)
+    {
+
+        Tupla *t = sol->getRota(i)->getPonta();
+        Aresta *a = t->destino->getArestas()->busca(id_origem);
+
+        Tupla *volta = new Tupla();
+
+        volta->destino = vertices->busca(id_origem);
+        volta->verticeId = id_origem;
+        volta->index_rota = t->index_rota;
+        volta->capacidade_restante = t->capacidade_restante;
+        volta->peso = a->getPeso();
+
+        sol->getRota(i)->insere(volta);
+    }
 
     return sol;
 }

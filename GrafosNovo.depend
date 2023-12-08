@@ -25,7 +25,7 @@
 
 1701281232 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\no.h
 
-1701915030 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\main.cpp
+1702000228 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\main.cpp
 	<iostream>
 	<fstream>
 	<string>
@@ -37,9 +37,10 @@
 	<stdlib.h>
 	<chrono>
 	<limits>
+	<typeinfo>
 	"./includes/Grafo.h"
 
-1701914794 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\grafo.h
+1701998783 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\grafo.h
 	<iostream>
 	<fstream>
 	<string>
@@ -66,13 +67,13 @@
 1701276691 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\aresta.cpp
 	"../includes/Vertice.h"
 
-1701732358 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\vertice.cpp
+1701915498 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\vertice.cpp
 	"../includes/Vertice.h"
 
-1701914825 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\grafo.cpp
+1702066021 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\grafo.cpp
 	"../includes/Grafo.h"
 
-1701524246 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\tabelahash.cpp
+1702066066 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\tabelahash.cpp
 	"../includes/TabelaHash.h"
 
 1701656852 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\aresta.h
@@ -82,18 +83,22 @@
 	"Vertice.h"
 	<iostream>
 
-1701830136 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\solucao.h
+1702000795 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\solucao.h
 	<vector>
+	<string>
+	<sstream>
 	"Rota.h"
 
 1701828570 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\rota.cpp
 	"../includes/Rota.h"
 
-1701833429 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\rota.h
+1702000890 c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\includes\rota.h
 	"Tupla.h"
 	"Lista.h"
 	<vector>
+	<sstream>
+	<string>
 
-1701893317 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\solucao.cpp
+1702000811 source:c:\users\hugo_\onedrive\햞ea de trabalho\grafosnovo\src\solucao.cpp
 	"../includes/Solucao.h"
 

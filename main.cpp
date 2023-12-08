@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <chrono>
 #include <limits>
+#include <regex>
 #include <typeinfo>
 
 #include "./includes/Grafo.h"
@@ -105,7 +106,7 @@ void escolhasManuais(Grafo *g)
         }
     } while (!exit);
 }
-void escolhasAlgoritimos(Grafo *g, ofstream &output, int repeticoes = 2500, int rotas = 5)
+void escolhasAlgoritimos(Grafo *g, ofstream &output, int repeticoes = 2500, int rotas = 5, int num_capacidade = 100)
 {
     bool exit = false;
     int escolha;
@@ -166,11 +167,11 @@ void escolhasAlgoritimos(Grafo *g, ofstream &output, int repeticoes = 2500, int 
             break;
         case 9:
             cout << "[Algoritimo Guloso]" << endl;
-            g->algoritimoGulosoRoteamento(5, 1, 0);
+            g->algoritimoGulosoRoteamento(rotas, num_capacidade, 1 );
             break;
         case 10:
             cout << "[Algoritimo Guloso Randomizado]" << endl;
-            g->algoritimoReativoRandomizadoGulosoRoteamento(rotas, 1, repeticoes);
+            g->algoritimoReativoRandomizadoGulosoRoteamento(rotas, num_capacidade, 1, repeticoes);
             break;
         case 11:
             cout << "[Impressão Graphviz]" << endl;
@@ -255,7 +256,7 @@ Grafo *leituraPorAraquivo(ifstream &input_file, int directed, int weightedEdge, 
     return g;
 }
 
-Grafo *leituraPorAraquivoTipo2(ifstream &input_file, string nome)
+Grafo *leituraPorAraquivoTipo2(ifstream &input_file, string nome, int *num_rotas, int *num_capacidade)
 {
     bool leitura_coords = false, leitura_demanda = false;
     std::string linha;
@@ -263,23 +264,37 @@ Grafo *leituraPorAraquivoTipo2(ifstream &input_file, string nome)
 
     Grafo *g = new Grafo(0, 1, 1, nome);
 
+    bool achouCapacidade = false;
+    bool achouNCaminhoes = false;
+
     if (input_file.is_open())
     {
+        std::regex padraoCaminha0("(No of trucks): (\\d+)"); // Expressão regular para encontrar o padrão "No of trucks: número"
+        std::regex padraoCapacidade("CAPACITY : (\\d+)");    // Expressão regular para encontrar o padrão "CAPACITY: número"
+
         while (std::getline(input_file, linha))
         {
             std::stringstream iss(linha);
 
-            if (linha.find("CAPACITY") != std::string::npos)
+            std::smatch matches;
+
+            
+            if (std::regex_search(linha, matches, padraoCaminha0) && !achouNCaminhoes)
             {
-                std::stringstream cap_stream(linha);
-                std::string token;
-                while (cap_stream >> token)
+                if (matches.size() == 3)
                 {
-                    if (token == "CAPACITY")
-                    {
-                        cap_stream >> capacidade;
-                        break;
-                    }
+                    std::string info = matches[2];           // O número de caminhões está no segundo grupo capturado pela expressão regular
+                    int numeroDeCaminhoes = std::stoi(info); // Convertendo a string para um número inteiro
+                    *num_rotas = numeroDeCaminhoes;
+                }
+            }
+
+            if (std::regex_search(linha, matches, padraoCapacidade)&& !achouCapacidade)
+            {
+                if (matches.size() == 2)
+                {
+                    std::string info = matches[1];         // O valor da capacidade está no primeiro grupo capturado pela expressão regular
+                    *num_capacidade = std::stoi(info); // Convertendo a string para um número inteiro
                 }
             }
 
@@ -373,22 +388,26 @@ int main(int argc, char *argv[])
         if (argc == 7 && type == "1")
         {
             size_t pos = input_file_name.find('/');
-            string nomeSemPath = input_file_name.substr(pos+1);
+            string nomeSemPath = input_file_name.substr(pos + 1);
             pos = input_file_name.find('.');
-            string nome = nomeSemPath.substr(0 , pos);
+            string nome = nomeSemPath.substr(0, pos);
 
             graph = leituraPorAraquivo(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), nome);
             escolhasAlgoritimos(graph, output_file);
         }
         else if (argc == 5 && type == "2")
         {
-             size_t pos = input_file_name.find('/');
-            string nomeSemPath = input_file_name.substr(pos+1);
+            size_t pos = input_file_name.find('/');
+            string nomeSemPath = input_file_name.substr(pos + 1);
             pos = input_file_name.find('.');
-            string nome = nomeSemPath.substr(0 , pos);
+            string nome = nomeSemPath.substr(0, pos);
 
-            graph = leituraPorAraquivoTipo2(input_file, nome);
-            escolhasAlgoritimos(graph, output_file, atoi(argv[4]));
+            int num_rotas = 0;
+            int num_capacidade = 0;
+
+            graph = leituraPorAraquivoTipo2(input_file, nome, &num_rotas, &num_capacidade);
+
+            escolhasAlgoritimos(graph, output_file, atoi(argv[4]), num_rotas, num_capacidade);
         }
     }
     else

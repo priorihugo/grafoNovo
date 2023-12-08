@@ -144,4 +144,6 @@ void TabelaHash::imprimeComoTabela()
         cout << "[" << index << "]" ;
         listaVertices->imprimeLista();
     }
+
+    cout << endl;
 }

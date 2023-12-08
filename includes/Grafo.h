@@ -84,8 +84,8 @@ public:
     Grafo* agmKruskal(ofstream& output);
     */
 
-    Solucao* algoritimoGulosoRoteamento(int numVeiculos , int id_origem , float alpha = 0);
-    void algoritimoReativoRandomizadoGulosoRoteamento(int numVeiculos , int id_origem , int repeticoes);
+    Solucao* algoritimoGulosoRoteamento(int numVeiculos, int capacidade , int id_origem, float alpha = 0 );
+    void algoritimoReativoRandomizadoGulosoRoteamento(int numVeiculos,  int capacidade,  int id_origem, int repeticoes );
     void imprimirGraphviz(string nome);
 
 };

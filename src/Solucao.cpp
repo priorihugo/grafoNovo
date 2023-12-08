@@ -5,13 +5,13 @@ Solucao::Solucao()
     this->rotas = new vector<Rota*>();
 }
 
-Solucao::Solucao(int tamanho)
+Solucao::Solucao(int tamanho , int capacidade)
 {
     this->rotas = new vector<Rota*>();
     this->rotas->resize(tamanho);
 
     for(size_t i = 0 ; i < this->rotas->size() ; i++){
-        this->rotas->at(i) = new Rota();
+        this->rotas->at(i) = new Rota(capacidade);
     }
 }
 

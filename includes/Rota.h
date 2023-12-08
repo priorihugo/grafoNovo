@@ -18,27 +18,33 @@ public:
     {
         this->tuplas = new Lista<Tupla>();
         this->capacidade = capacidade;
+        this->custo = 0;
     };
     ~Rota()
     {
 
         delete tuplas;
     }
-    float getCusto()
-    {
-        float custo = 0;
-        tuplas->iterator = tuplas->iteratorInicio();
-        while (tuplas->iterator != nullptr)
-        {
-            custo += tuplas->iterator->getData()->getPeso();
-            tuplas->proximo();
-        }
-        return custo;
+    // float getCusto()
+    // {
+    //     float custo = 0;
+    //     tuplas->iterator = tuplas->iteratorInicio();
+    //     while (tuplas->iterator != nullptr)
+    //     {
+    //         custo += tuplas->iterator->getData()->getPeso();
+    //         tuplas->proximo();
+    //     }
+    //     return custo;
+    // }
+
+    float getCusto(){
+        return this->custo;
     }
 
     void insere(Tupla *t)
     {
         capacidade -= t->getPeso();
+        custo += t->getPeso();
         this->tuplas->insereInicio(t, 0);
         vertices++;
     }
@@ -82,6 +88,8 @@ public:
 
 private:
     float capacidade;
+
+    float custo;
 
     Lista<Tupla> *tuplas;
 };

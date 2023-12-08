@@ -57,8 +57,10 @@
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "files.associations": {
-    "iosfwd": "cpp",
-    "iostream": "cpp",
-    "ostream": "cpp"
+    "ostream": "cpp",
+    "ratio": "cpp",
+    "cmath": "cpp",
+    "new": "cpp",
+    "chrono": "cpp"
   }
 }
