@@ -259,7 +259,7 @@ Grafo *Grafo::buscaEmLargura(int id)
     {
         Vertice *atual = pilhaVertices->desempilhaPrimeiro();
         Lista<Aresta> *arestas = atual->getArestas();
-        //arestas->imprimeLista();
+        // arestas->imprimeLista();
         arestas->iterator = arestas->iteratorInicio();
 
         resultado->insereVertice(atual->getId());
@@ -297,7 +297,7 @@ bool Grafo::aux(Grafo *resultado, TabelaHash *visitados, Vertice *inicio)
             cout << "adicione todo o caminho ah solução e retorna" << endl;
             /// adicione todo o caminho ah solução e retorna
             Vertice *destino = caminho->desempilhaPrimeiro();
-            //caminho->imprimeLista();
+            // caminho->imprimeLista();
             while (!caminho->ehVazia())
             {
                 Vertice *origem = caminho->desempilhaPrimeiro();
@@ -332,7 +332,7 @@ bool Grafo::aux(Grafo *resultado, TabelaHash *visitados, Vertice *inicio)
                 if (naoVisitadoOuSolucao && pilhaDeVertices->busca(atual->getArestas()->iterator->getData()->getDestino()->getId()) == nullptr)
                 {
                     cout << "inserindo" << endl;
-                    //atual->getArestas()->iterator->getData()->getDestino()->imprime();
+                    // atual->getArestas()->iterator->getData()->getDestino()->imprime();
                     pilhaDeVertices->insereInicio(atual->getArestas()->iterator->getData()->getDestino());
                 }
                 atual->getArestas()->proximo();
@@ -340,7 +340,7 @@ bool Grafo::aux(Grafo *resultado, TabelaHash *visitados, Vertice *inicio)
         }
 
         visitados->insere(atual->getId(), atual);
-        //pilhaDeVertices->imprimeLista();
+        // pilhaDeVertices->imprimeLista();
     }
 
     delete caminho;
@@ -454,12 +454,39 @@ float Grafo::dijkstra(int id_origem, int id_destino, ofstream &output)
     }
 }
 
-Aresta *getArestaMenorPeso(Rota *rota)
+Aresta *getArestaMenorPeso(Rota *rota , int id_origem)
 {
     Lista<Aresta> *lista = rota->getPonta()->destino->getArestas();
     Aresta *menor = nullptr;
     float menorPeso = INT_MAX;
+    float porcentagemCheio = rota->getPorcentagemParaVolta();
+    float limiteDistancia = rota->getThreshold();
 
+    //busca uma aresta proxima a origem;
+    if (rota->getCapacidadeRestante() > rota->getCapacidadeMaxima() * porcentagemCheio)
+    {
+        lista->iterator = lista->iteratorInicio();
+        while (lista->iterator != nullptr)
+        {
+            Aresta *aresta = (Aresta *)lista->iterator->getData();
+            Vertice* verticeCandidato = aresta->getDestino();
+            Aresta* distanciaParaOrigem = verticeCandidato->buscaAresta(id_origem);
+
+            if (!(verticeCandidato->ehVisitado()) &&
+                (aresta->getPeso() <= menorPeso) &&
+                (distanciaParaOrigem->getPeso() <= limiteDistancia) &&
+                (rota->getPonta()->capacidade_restante - verticeCandidato->getPeso() >= 0))
+            {
+                menor = aresta;
+                menorPeso = menor->getPeso();
+            }
+            lista->proximo();
+        }
+    }
+
+    if(menor != nullptr) return menor;
+    
+    //busca uma aresta no geral
     lista->iterator = lista->iteratorInicio();
     while (lista->iterator != nullptr)
     {
@@ -507,7 +534,7 @@ void quicksort(std::vector<Tupla *> &vetor, int baixo, int alto)
     }
 }
 
-vector<Tupla *> *getCandidatos(Solucao *rotas, int tamanho)
+vector<Tupla *> *getCandidatos(Solucao *rotas, int tamanho , int id_origem)
 {
     //    cout << "todas as rotas " << endl;
     //    rotas->imprime();
@@ -517,7 +544,7 @@ vector<Tupla *> *getCandidatos(Solucao *rotas, int tamanho)
     for (size_t i = 0; i < tamanho; ++i)
     {
         Tupla *tuplaPonta = rotas->getRota(i)->getPonta();
-        Aresta *menorAresta = getArestaMenorPeso(rotas->getRota(i));
+        Aresta *menorAresta = getArestaMenorPeso(rotas->getRota(i) , id_origem);
 
         if (menorAresta != nullptr)
         {
@@ -592,7 +619,7 @@ int escolheIndiceAlpha(double probabilidades[], int tamanho)
 void Grafo::algoritimoReativoRandomizadoGulosoRoteamento(int numVeiculos, int capacidade, int id_origem, int repeticoes)
 {
     auto start = std::chrono::high_resolution_clock::now();
-    //double alphas[6] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6};
+    // double alphas[6] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6};
     double alphas[6] = {0.05, 0.1, 0.15, 0.2, 0.25, 0.3};
 
     double probabilidades[6];
@@ -721,7 +748,7 @@ Solucao *Grafo::algoritimoGulosoRoteamento(int numVeiculos, int capacidade, int 
     do
     {
         vector<Tupla *> *canditatos = nullptr;
-        canditatos = getCandidatos(sol, numVeiculos);
+        canditatos = getCandidatos(sol, numVeiculos , id_origem);
 
         auto seed = chrono::high_resolution_clock::now().time_since_epoch().count();
         mt19937 gen(seed);
@@ -740,7 +767,7 @@ Solucao *Grafo::algoritimoGulosoRoteamento(int numVeiculos, int capacidade, int 
             melhor->destino->setVisitado(true);
             sol->getRota(rotaMelhor)->insere(melhor);
 
-            //sol->imprime();
+            // sol->imprime();
         }
 
         delete canditatos;
@@ -752,7 +779,7 @@ Solucao *Grafo::algoritimoGulosoRoteamento(int numVeiculos, int capacidade, int 
         if (!vertices->iterator->getData()->ehVisitado())
             return nullptr;
 
-        vertices->proximo();      
+        vertices->proximo();
     }
 
     for (size_t i = 0; i < numVeiculos; i++)

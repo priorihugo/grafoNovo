@@ -17,7 +17,10 @@ public:
     Rota(float capacidade = 100)
     {
         this->tuplas = new Lista<Tupla>();
-        this->capacidade = capacidade;
+        this->capacidade_restante = capacidade;
+        this->capacidade_maxima = capacidade;
+        this->porcentagemParaVolta = 0.5;
+        this->distanciaThreshold = 0;
         this->custo = 0;
     };
     ~Rota()
@@ -37,14 +40,41 @@ public:
     //     return custo;
     // }
 
-    float getCusto(){
+    float getCusto()
+    {
         return this->custo;
+    }
+
+    float getCapacidadeRestante()
+    {
+        return capacidade_restante;
+    }
+
+    float getCapacidadeMaxima()
+    {
+        return capacidade_maxima;
+    }
+
+    float getPorcentagemParaVolta()
+    {
+        return porcentagemParaVolta;
+    }
+
+    float getThreshold()
+    {
+        return distanciaThreshold;
     }
 
     void insere(Tupla *t)
     {
-        capacidade -= t->getPeso();
+        capacidade_restante -= t->getPeso();
         custo += t->getPeso();
+
+        if (capacidade_restante > (capacidade_maxima * this->porcentagemParaVolta) && distanciaThreshold == 0)
+        {       
+            distanciaThreshold = custo;
+        }
+
         this->tuplas->insereInicio(t, 0);
         vertices++;
     }
@@ -76,7 +106,7 @@ public:
         {
             Tupla *t = this->tuplas->iterator->getData();
             ss << " - " << t->getId() << "P(" << t->peso << ")"
-                 << "CR(" << t->capacidade_restante << ")";
+               << "CR(" << t->capacidade_restante << ")";
             this->tuplas->proximo();
         }
         ss << " - " << endl;
@@ -87,7 +117,10 @@ public:
     int vertices = 0;
 
 private:
-    float capacidade;
+    float capacidade_restante;
+    float capacidade_maxima;
+    float porcentagemParaVolta;
+    float distanciaThreshold;
 
     float custo;
 
